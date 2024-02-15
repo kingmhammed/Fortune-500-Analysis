@@ -56,14 +56,13 @@ VALUES
     ('Company JJ', 'Manufacturing', 370.0, 3100, 1, 20, 12, 7.6),
     ('Company KK', 'Healthcare', 150.2, 3400, 0, 16, 8, 5.3);
 
-
 #Employee Satisfaction by Industry:
 #QUERRY1: Group the companies into two categories: 'Technology' and 'Non-Technology.' 
 #Calculate the average employee satisfaction for each category, and display only those categories where the average satisfaction is above 5.
 
-SELECT 
+    SELECT 
     CASE
-        WHEN industry = 'Technology' THEN 'Technology'
+        WHEN Industry = 'Technology' THEN 'Technology'
         ELSE 'Non-Technology'
     END AS IndustryCategory
     FROM fortune_companies
@@ -74,31 +73,33 @@ SELECT
 #QUERRY2: Identify companies that have both revenues above $300 billion and offer healthcare benefits.
 #List the company names and their total employee count.
 
-SELECT
-    company_name,
-    SUM(employees) AS TotalEmployees
+
+SELECT 
+   Company_name,
+    SUM(employees) AS Total_Employees
 FROM
     fortune_companies
 WHERE
     revenue > 300
     AND healthcare_benefits = 1
 GROUP BY
-    company_name;
+    Company_name
+ORDER BY  company_id ASC;
     
 #Maternity Leave Comparison:
 #QUERRY3: Compare the average maternity leave weeks between companies with and without healthcare benefits. 
 #Display only those categories where the average maternity leave for companies without healthcare benefits is greater than 10 weeks.
 
-SELECT
+SELECT Industry, 
     CASE
         WHEN healthcare_benefits = 1 THEN 'With Healthcare Benefits'
         ELSE 'Without Healthcare Benefits'
     END AS BenefitCategory,
-    AVG(maternity_leave_weeks) AS AvgMaternityLeave
+    ROUND(AVG(maternity_leave_weeks), 2) AS AvgMaternityLeave
 FROM
     fortune_companies
 GROUP BY
-    BenefitCategory
+  Industry, BenefitCategory
 HAVING
     AVG(maternity_leave_weeks) > 10;
     
@@ -107,12 +108,20 @@ HAVING
 #Group the companies by industry and paid time off days. 
 #QUERRY4: Calculate the total revenue for each combination, and display only those combinations where the total revenue is above $200 billion.
 
+
 SELECT
-paid_time_off_days,
-SUM(revenue) AS revenue
-FROM fortune_companies 
-GROUP BY industry, paid_time_off_days
-HAVING SUM(revenue) > 200;
+    Industry,
+    paid_time_off_days,
+    ROUND(SUM(revenue), 2 ) AS TotalRevenue
+FROM
+    fortune_companies
+GROUP BY
+    Industry, paid_time_off_days
+HAVING
+    SUM(revenue) > 200
+ORDER BY
+    TotalRevenue DESC;
+
 
 
 #QUERRY5: Average Employee Tenure by Revenue Range:
@@ -125,22 +134,8 @@ SELECT
         WHEN revenue <= 400 THEN 'Medium'
         ELSE 'High'
     END AS RevenueCategory,
-    AVG(avg_employee_tenure) AS AvgEmployeeTenure
+    ROUND(AVG(avg_employee_tenure), 2) AS AvgEmployeeTenture
 FROM
     fortune_companies
 GROUP BY
     RevenueCategory;
-
-
-SELECT
-    CASE
-        WHEN revenue <= 200 THEN 'Low'
-        WHEN revenue <= 400 THEN 'Medium'
-        ELSE 'High'
-    END AS RevenueCategory,
-    AVG(avg_employee_tenure) AS AvgEmployeeTenure
-FROM
-    fortune_companies
-GROUP BY
-    RevenueCategory;
-
